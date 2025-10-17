@@ -488,7 +488,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/SkrimishPrototype.unity
   onlineScene: 
   offlineSceneLoadDelay: 0
-  transport: {fileID: 0}
+  transport: {fileID: 353797260}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
@@ -501,6 +501,7 @@ MonoBehaviour:
   - {fileID: 703302942189319812, guid: 787b8c8b8e958374589e80c18b342c34, type: 3}
   - {fileID: 7678006364064386042, guid: b4451032ae28a014898053a211c19fc8, type: 3}
   - {fileID: 4485124518682013349, guid: b7f023d6447a1454785fda76bb2c809b, type: 3}
+  - {fileID: 8375675674782561973, guid: a0328d0b4b31dba47aa44e6f5776d848, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -520,8 +521,8 @@ MonoBehaviour:
   player2UnitPrefab: {fileID: 7678006364064386042, guid: b4451032ae28a014898053a211c19fc8, type: 3}
   spawnCountPerPlayer: 6
   spawnArea: {x: 8, y: 0, z: 8}
-  player1SpawnCenter: {fileID: 571373693}
-  player2SpawnCenter: {fileID: 1447445224}
+  player1SpawnCenter: {fileID: 0}
+  player2SpawnCenter: {fileID: 0}
 --- !u!4 &353797262
 Transform:
   m_ObjectHideFlags: 0
@@ -531,7 +532,7 @@ Transform:
   m_GameObject: {fileID: 353797259}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -38.8, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -678,74 +679,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &571373692
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 571373693}
-  - component: {fileID: 571373695}
-  - component: {fileID: 571373694}
-  m_Layer: 0
-  m_Name: P1Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &571373693
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571373692}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1509016315}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &571373694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571373692}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 209860097
-  _assetId: 0
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
---- !u!114 &571373695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571373692}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e59dbb91f5750442ade96d35ccc44d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  unitPrefab: {fileID: 703302942189319812, guid: 787b8c8b8e958374589e80c18b342c34, type: 3}
-  count: 5
-  area: {x: 10, y: 3, z: 10}
 --- !u!1 &635478151
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,74 +1023,6 @@ Transform:
   - {fileID: 832575519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1447445223
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1447445224}
-  - component: {fileID: 1447445226}
-  - component: {fileID: 1447445225}
-  m_Layer: 0
-  m_Name: P2Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1447445224
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447445223}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1509016315}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1447445225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447445223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 2485225799
-  _assetId: 0
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
---- !u!114 &1447445226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447445223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e59dbb91f5750442ade96d35ccc44d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  unitPrefab: {fileID: 703302942189319812, guid: 787b8c8b8e958374589e80c18b342c34, type: 3}
-  count: 5
-  area: {x: 10, y: 3, z: 10}
 --- !u!1 &1509016314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,9 +1051,7 @@ Transform:
   m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 571373693}
-  - {fileID: 1447445224}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1533791721
@@ -1311,7 +1174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1544681036
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1492,6 +1355,7 @@ GameObject:
   - component: {fileID: 1707007788}
   - component: {fileID: 1707007787}
   - component: {fileID: 1707007790}
+  - component: {fileID: 1707007791}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1573,6 +1437,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BakeOnStart
   surface: {fileID: 0}
+--- !u!114 &1707007791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707007786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeb2e0b36be05124583808f9503dfc0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GridGizmo
+  cellSize: 2
+  halfCells: 100
+  color: {r: 1, g: 1, b: 1, a: 0.050980393}
 --- !u!1 &1825649672
 GameObject:
   m_ObjectHideFlags: 0

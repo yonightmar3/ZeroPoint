@@ -56,6 +56,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   selectionBoxUI: {fileID: 0}
+  clickSqrThreshold: 25
+  teamId: 0
 --- !u!114 &308300012094119817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,9 +90,15 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  buildingPrefab: {fileID: 4485124518682013349, guid: b7f023d6447a1454785fda76bb2c809b, type: 3}
+  player1BasePrefab: {fileID: 4485124518682013349, guid: b7f023d6447a1454785fda76bb2c809b, type: 3}
+  player2BasePrefab: {fileID: 8375675674782561973, guid: a0328d0b4b31dba47aa44e6f5776d848, type: 3}
   groundMask:
     serializedVersion: 2
-    m_Bits: 0
-  gridSize: 1
-  placementRadius: 20
+    m_Bits: 8
+  buildingMask:
+    serializedVersion: 2
+    m_Bits: 128
+  cellSize: 2
+  rotateStep: 90
+  gridHalfCells: 16
+  gridYOffset: 0.01
