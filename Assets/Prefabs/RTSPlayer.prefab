@@ -51,10 +51,10 @@ MonoBehaviour:
   syncInterval: 0
   groundMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   selectableMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   selectionBoxUI: {fileID: 0}
 --- !u!114 &308300012094119817
 MonoBehaviour:
@@ -85,3 +85,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 971c939942e6c0a4cac67d728682b887, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingPlacer
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  buildingPrefab: {fileID: 4485124518682013349, guid: b7f023d6447a1454785fda76bb2c809b, type: 3}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  gridSize: 1
+  placementRadius: 20

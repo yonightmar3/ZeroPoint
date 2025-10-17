@@ -14,13 +14,12 @@ public class NetworkUnit : NetworkBehaviour
         selectable = GetComponent<Selectable>();
     }
 
-    // client-side selection feedback
     [ClientCallback] void OnEnable() => selectable.SetSelected(false);
 
-    // === client → server orders ===
-    [Command] // called by the **local** client that owns the unit OR by a player commander (see below)
+    // IMPORTANT: allow any client to request orders (server validates rules)
+    [Command(requiresAuthority = false)]
     public void CmdMove(Vector3 dest) => movement.ServerMoveTo(dest);
 
-    [Command]
+    [Command(requiresAuthority = false)]
     public void CmdAttackMove(Vector3 dest) => movement.ServerAttackMove(dest);
 }
