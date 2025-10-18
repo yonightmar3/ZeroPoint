@@ -6,31 +6,28 @@ using UnityEngine.InputSystem;
 public class RTSPlayer : NetworkBehaviour
 {
     [Header("Raycast Masks")]
-    [Tooltip("Layers the ground/terrain meshes are on (for right-click movement).")]
     public LayerMask groundMask;
-    [Tooltip("Layers your unit colliders are on (for selection).")]
     public LayerMask selectableMask;
 
-    [Header("Selection UI (optional)")]
-    [Tooltip("Leave empty on the prefab; this script will auto-find an inactive object named or tagged 'SelectionBox'.")]
+    [Header("Selection UI")]
     public RectTransform selectionBoxUI;
 
-    [Header("Tuning")]
-    [Tooltip("Squared pixel distance to treat a press/release as a click instead of a drag.")]
+    [Header("Selection Settings")]
     public float clickSqrThreshold = 25f;
+    public float doubleClickTime = 0.25f;
 
-    // Assigned by the server in CustomNetworkManager.OnServerAddPlayer
     [SyncVar] public ushort teamId;
 
     Camera cam;
     Vector2 dragStart;
     bool dragging;
+    float lastClickTime;
+    Selectable lastClickedType;
 
     readonly List<Selectable> currentSelection = new();
 
     void Awake()
     {
-        // If someone left it enabled in the editor, hide it at runtime.
         if (selectionBoxUI != null)
             selectionBoxUI.gameObject.SetActive(false);
     }
@@ -38,45 +35,25 @@ public class RTSPlayer : NetworkBehaviour
     void Start()
     {
         if (!isLocalPlayer) return;
-
         cam = Camera.main;
 
-        // Robust auto-find that works even if the SelectionBox object is inactive.
+#if UNITY_2022_3_OR_NEWER
         if (selectionBoxUI == null)
         {
-#if UNITY_2022_3_OR_NEWER
             var rects = Object.FindObjectsByType<RectTransform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-#else
-            var rects = Resources.FindObjectsOfTypeAll<RectTransform>(); // includes inactive, but also assets
-#endif
             foreach (var r in rects)
-            {
-                if (!r || !r.gameObject.scene.IsValid()) continue; // ignore assets/prefabs
-                if (r.name == "SelectionBox" || r.CompareTag("SelectionBox"))
-                {
-                    selectionBoxUI = r;
-                    break;
-                }
-            }
-            if (selectionBoxUI == null)
-                Debug.LogWarning("[RTSPlayer] SelectionBox not found. Name it 'SelectionBox' or tag it 'SelectionBox'.");
+                if (r && r.gameObject.scene.IsValid() && (r.name == "SelectionBox" || r.CompareTag("SelectionBox")))
+                { selectionBoxUI = r; break; }
         }
-
-        if (selectionBoxUI != null)
-            selectionBoxUI.gameObject.SetActive(false);
-    }
-
-    void OnDisable()
-    {
-        if (selectionBoxUI != null)
-            selectionBoxUI.gameObject.SetActive(false);
+#endif
+        if (selectionBoxUI) selectionBoxUI.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (!isLocalPlayer) return;
 
-        // If we're currently placing a building, ignore selection & move input.
+        // Pause selection while any placer is active
         var placer = GetComponent<BuildingPlacer>();
         if (placer != null && placer.IsPlacing)
             return;
@@ -85,63 +62,56 @@ public class RTSPlayer : NetworkBehaviour
         HandleRightClickMove();
     }
 
-    // -------------------------
-    // Selection (LMB + drag box)
-    // -------------------------
+    // ================= Selection =================
     void HandleSelection()
     {
         var mouse = Mouse.current;
+        var kb = Keyboard.current;
         if (mouse == null || cam == null) return;
 
-        // Begin drag
+        bool shift = kb != null && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
+        bool ctrl = kb != null && (kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed);
+
+        // start drag
         if (mouse.leftButton.wasPressedThisFrame)
         {
             dragging = true;
             dragStart = mouse.position.ReadValue();
 
-            if (selectionBoxUI != null)
+            if (selectionBoxUI)
             {
                 selectionBoxUI.gameObject.SetActive(true);
-
-                // Bottom-left anchors so screen coordinates map directly.
                 selectionBoxUI.pivot = new Vector2(0, 0);
                 selectionBoxUI.anchorMin = new Vector2(0, 0);
                 selectionBoxUI.anchorMax = new Vector2(0, 0);
-
                 selectionBoxUI.anchoredPosition = dragStart;
                 selectionBoxUI.sizeDelta = Vector2.zero;
             }
         }
 
-        // While dragging, update the rectangle
-        if (dragging && selectionBoxUI != null)
+        // update box
+        if (dragging && selectionBoxUI)
         {
             Vector2 curr = mouse.position.ReadValue();
-
             float left = Mathf.Min(dragStart.x, curr.x);
             float right = Mathf.Max(dragStart.x, curr.x);
             float bottom = Mathf.Min(dragStart.y, curr.y);
             float top = Mathf.Max(dragStart.y, curr.y);
-
             selectionBoxUI.anchoredPosition = new Vector2(left, bottom);
             selectionBoxUI.sizeDelta = new Vector2(right - left, top - bottom);
         }
 
-        // Release → click or box select
+        // release
         if (mouse.leftButton.wasReleasedThisFrame)
         {
-            if (selectionBoxUI != null)
-                selectionBoxUI.gameObject.SetActive(false);
-
+            if (selectionBoxUI) selectionBoxUI.gameObject.SetActive(false);
             dragging = false;
 
             Vector2 end = mouse.position.ReadValue();
             bool isClick = (end - dragStart).sqrMagnitude < clickSqrThreshold;
 
-            // Clear previous selection visuals
-            foreach (var s in currentSelection)
-                s.SetSelected(false);
-            currentSelection.Clear();
+            if (!shift && !ctrl)
+                ClearSelection();
 
             if (isClick)
             {
@@ -149,13 +119,26 @@ public class RTSPlayer : NetworkBehaviour
                 if (Physics.Raycast(ray, out var hit, 2000f, selectableMask))
                 {
                     var sel = hit.collider.GetComponentInParent<Selectable>();
-                    if (sel != null)
+                    if (sel != null && BelongsToMe(sel))
                     {
-                        var own = sel.GetComponent<TeamOwnership>();
-                        if (own != null && own.teamId == teamId)
+                        bool isDouble = (Time.time - lastClickTime) <= doubleClickTime && lastClickedType != null &&
+                                        sel.GetType() == lastClickedType.GetType();
+                        lastClickTime = Time.time;
+                        lastClickedType = sel;
+
+                        if (ctrl)
+                        {
+                            // toggle
+                            if (currentSelection.Contains(sel)) { sel.SetSelected(false); currentSelection.Remove(sel); }
+                            else { sel.SetSelected(true); currentSelection.Add(sel); }
+                        }
+                        else
                         {
                             sel.SetSelected(true);
-                            currentSelection.Add(sel);
+                            if (!currentSelection.Contains(sel)) currentSelection.Add(sel);
+
+                            if (isDouble)
+                                SelectAllOfSameTypeOnScreen(sel);
                         }
                     }
                 }
@@ -163,55 +146,79 @@ public class RTSPlayer : NetworkBehaviour
             else
             {
                 Rect rect = GetScreenRect(dragStart, end);
-                var all = GameObject.FindObjectsOfType<Selectable>(); // v0: simple; replace with manager/pooling later
+                var all = GameObject.FindObjectsOfType<Selectable>();
                 foreach (var s in all)
                 {
-                    var own = s.GetComponent<TeamOwnership>();
-                    if (own == null || own.teamId != teamId) continue;
-
+                    if (!BelongsToMe(s)) continue;
                     Vector3 sp = cam.WorldToScreenPoint(s.transform.position);
                     if (sp.z > 0 && rect.Contains(sp))
                     {
-                        s.SetSelected(true);
-                        currentSelection.Add(s);
+                        if (ctrl && currentSelection.Contains(s))
+                        { s.SetSelected(false); currentSelection.Remove(s); }
+                        else
+                        { s.SetSelected(true); if (!currentSelection.Contains(s)) currentSelection.Add(s); }
                     }
                 }
             }
         }
     }
 
-    // -------------------------
-    // Orders (RMB to move)
-    // -------------------------
-    void HandleRightClickMove()
+    void ClearSelection()
     {
-        if (currentSelection.Count == 0) return;
+        foreach (var s in currentSelection) s.SetSelected(false);
+        currentSelection.Clear();
+    }
 
-        var mouse = Mouse.current;
-        if (mouse == null || cam == null) return;
+    bool BelongsToMe(Selectable s)
+    {
+        var own = s.GetComponent<TeamOwnership>();
+        return own != null && own.teamId == teamId;
+    }
 
-        if (mouse.rightButton.wasPressedThisFrame)
+    void SelectAllOfSameTypeOnScreen(Selectable sample)
+    {
+        var type = sample.GetType();
+        var all = GameObject.FindObjectsOfType<Selectable>();
+        foreach (var s in all)
         {
-            Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
-            if (Physics.Raycast(ray, out var groundHit, 2000f, groundMask))
+            if (!BelongsToMe(s)) continue;
+            if (s.GetType() != type) continue;
+            Vector3 sp = cam.WorldToScreenPoint(s.transform.position);
+            if (sp.z > 0 && sp.x >= 0 && sp.x <= Screen.width && sp.y >= 0 && sp.y <= Screen.height)
             {
-                Vector3 dest = groundHit.point;
-
-                for (int i = 0; i < currentSelection.Count; i++)
-                {
-                    var unit = currentSelection[i].GetComponent<NetworkUnit>();
-                    if (unit != null)
-                        unit.CmdMove(dest); // server validates team
-                }
+                s.SetSelected(true);
+                if (!currentSelection.Contains(s)) currentSelection.Add(s);
             }
         }
     }
 
-    // Helper: screen-space rect from two corners
     static Rect GetScreenRect(Vector2 start, Vector2 end)
     {
         Vector2 bl = new(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
         Vector2 tr = new(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
         return Rect.MinMaxRect(bl.x, bl.y, tr.x, tr.y);
+    }
+
+    // ================= Orders: Right-click move with formation =================
+    void HandleRightClickMove()
+    {
+        if (currentSelection.Count == 0) return;
+        var mouse = Mouse.current; if (mouse == null) return;
+        if (!mouse.rightButton.wasPressedThisFrame) return;
+
+        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+        if (!Physics.Raycast(ray, out var groundHit, 2000f, groundMask)) return;
+
+        Vector3 dest = groundHit.point;
+
+        // fan-out slots
+        var slots = ZeroPoint.Orders.FormationPlanner.GridSlots(dest, currentSelection.Count, 1.5f);
+
+        for (int i = 0; i < currentSelection.Count; i++)
+        {
+            var unit = currentSelection[i].GetComponent<NetworkUnit>();
+            if (unit != null)
+                unit.CmdMove(slots[i]); // server validates team
+        }
     }
 }

@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 3156160605559797721}
   - component: {fileID: 308300012094119817}
   - component: {fileID: 6466442877338044174}
+  - component: {fileID: -822435247885709504}
+  - component: {fileID: -7966870401365684337}
   m_Layer: 0
   m_Name: RTSPlayer
   m_TagString: Untagged
@@ -102,3 +104,27 @@ MonoBehaviour:
   rotateStep: 90
   gridHalfCells: 16
   gridYOffset: 0.01
+--- !u!114 &-822435247885709504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382685968185554942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c90ff06279fb84947bac559966d36ab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBank
+--- !u!114 &-7966870401365684337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382685968185554942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 774a64d4baee865469e52f3d15cc0562, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrdersBuild
