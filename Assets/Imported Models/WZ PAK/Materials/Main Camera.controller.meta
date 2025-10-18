@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3945ce23edf558c4bba9adad535b75fc
+timeCreated: 1459275081
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57826
+  packageName: WarZone Sci-Fi Level Kit
+  packageVersion: 1.0
+  assetPath: Assets/WZ PAK/Materials/Main Camera.controller
+  uploadId: 110209
