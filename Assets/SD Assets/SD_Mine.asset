@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SD_Mine
   m_EditorClassIdentifier: Assembly-CSharp::ZeroPoint.Data.StructureDefinition
   id: Mine
-  team1Prefab: {fileID: 0}
-  team2Prefab: {fileID: 0}
+  team1Prefab: {fileID: 7337316016117486449, guid: 467d319aa8f3fb7418df00d7a652da6f, type: 3}
+  team2Prefab: {fileID: 7337316016117486449, guid: 467d319aa8f3fb7418df00d7a652da6f, type: 3}
   category: 2
   powerCost: 5
   ironCost: 0

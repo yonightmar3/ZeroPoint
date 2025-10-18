@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SD_Conveyor
   m_EditorClassIdentifier: Assembly-CSharp::ZeroPoint.Data.StructureDefinition
   id: Conveyor
-  team1Prefab: {fileID: 0}
-  team2Prefab: {fileID: 0}
+  team1Prefab: {fileID: 5543166882667611119, guid: 1c992158b7777ae4687f782b1d2ce560, type: 3}
+  team2Prefab: {fileID: 5543166882667611119, guid: 1c992158b7777ae4687f782b1d2ce560, type: 3}
   category: 3
   powerCost: 0
   ironCost: 0
