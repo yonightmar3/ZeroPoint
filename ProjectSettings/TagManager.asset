@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - SelectionBox
+  - IronNode
+  - HQ
   layers:
   - Default
   - TransparentFX
@@ -14,8 +16,8 @@ TagManager:
   - UI
   - Units
   - Buildings
-  - 
-  - 
+  - Obstacles
+  - Resources
   - 
   - 
   - 
